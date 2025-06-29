@@ -1,9 +1,9 @@
-import { AsyncLocalStorage } from 'async_hooks'
-import { LucidModel } from '@adonisjs/lucid/build/src/types/model.js'
-import type { 
+import { AsyncLocalStorage } from 'node:async_hooks'
+import type { LucidModel } from '@adonisjs/lucid/types/model'
+import type {
   TransactionClientContract
-} from '@adonisjs/lucid/build/src/types/database.js'
-import db from '@adonisjs/lucid/build/services/db.js'
+} from '@adonisjs/lucid/types/database'
+import db from '@adonisjs/lucid/services/db'
 
 /**
  * Transaction configuration options
