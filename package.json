@@ -1,6 +1,6 @@
 {
   "name": "adonisjs-transaction-decorator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Transaction decorator and mixin for AdonisJS applications",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -26,7 +26,7 @@
   "author": "ssortia",
   "license": "MIT",
   "peerDependencies": {
-    "@adonisjs/lucid": "^20.0.0"
+    "@adonisjs/lucid": "^21.6.0"
   },
   "devDependencies": {
     "@adonisjs/lucid": "^21.6.0",
