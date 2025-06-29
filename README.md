@@ -1,4 +1,4 @@
-# @adonisjs/transaction
+# adonisjs-transaction-decorator
 
 🚀 **Advanced transaction management for AdonisJS applications**
 
@@ -18,7 +18,7 @@ Powerful transaction decorator and mixin that provides automatic transaction han
 ## Installation
 
 ```bash
-npm install @adonisjs/transaction
+npm install adonisjs-transaction-decorator
 ```
 
 ## Quick Start
@@ -26,7 +26,7 @@ npm install @adonisjs/transaction
 ### 1. Transaction Decorator
 
 ```typescript
-import { transaction } from '@adonisjs/transaction'
+import { transaction } from 'adonisjs-transaction-decorator'
 
 class UserService {
   @transaction()
@@ -51,7 +51,7 @@ class UserService {
 ### 2. Transactional Mixin
 
 ```typescript
-import { Transactional } from '@adonisjs/transaction'
+import { Transactional } from 'adonisjs-transaction-decorator'
 import { BaseModel } from '@adonisjs/lucid/orm'
 
 class User extends Transactional(BaseModel) {
@@ -72,7 +72,7 @@ class UserController {
 ### 3. Programmatic Usage
 
 ```typescript
-import { runInTransaction } from '@adonisjs/transaction'
+import { runInTransaction } from 'adonisjs-transaction-decorator'
 
 // Execute multiple operations in a transaction
 const result = await runInTransaction(async () => {

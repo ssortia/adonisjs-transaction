@@ -1,5 +1,5 @@
 {
-  "name": "@adonisjs/transaction",
+  "name": "adonisjs-transaction-decorator",
   "version": "1.0.0",
   "description": "Transaction decorator and mixin for AdonisJS applications",
   "main": "build/index.js",
@@ -29,7 +29,7 @@
     "@adonisjs/lucid": "^20.0.0"
   },
   "devDependencies": {
-    "@adonisjs/lucid": "^21.0.0",
+    "@adonisjs/lucid": "^21.6.0",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0",
     "rimraf": "^5.0.0"
@@ -39,10 +39,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/username/adonisjs-transaction.git"
+    "url": "git+https://github.com/ssortia/adonisjs-transaction.git"
   },
   "bugs": {
-    "url": "https://github.com/username/adonisjs-transaction/issues"
+    "url": "https://github.com/ssortia/adonisjs-transaction/issues"
   },
-  "homepage": "https://github.com/username/adonisjs-transaction#readme"
+  "homepage": "https://github.com/ssortia/adonisjs-transaction#readme"
 }
