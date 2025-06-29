@@ -23,7 +23,7 @@
     "database",
     "lucid"
   ],
-  "author": "",
+  "author": "ssortia",
   "license": "MIT",
   "peerDependencies": {
     "@adonisjs/lucid": "^20.0.0"
