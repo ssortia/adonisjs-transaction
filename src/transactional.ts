@@ -1,5 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
-import type { LucidModel } from '@adonisjs/lucid/types/model'
+import type { NormalizeConstructor } from '@adonisjs/core/types/helpers';
+import { BaseModel } from '@adonisjs/lucid/orm';
+
 import type {
   TransactionClientContract
 } from '@adonisjs/lucid/types/database'
@@ -289,19 +291,24 @@ function injectTransaction<T extends ModelOptions>(options?: T): T {
  * }
  * ```
  */
-export function Transactional<T extends new (...args: any[]) => LucidModel>(superclass: T) {
+export function Transactional<T extends NormalizeConstructor<typeof BaseModel>>(superclass: T): T {
   const TransactionalModel = class extends superclass {
     // Static methods with automatic transaction injection
     static query(options?: ModelOptions) {
-      return (superclass as any).query(injectTransaction(options))
+      // Ensure the model is properly booted before querying
+      if (typeof (this as any).boot === 'function') {
+        (this as any).boot()
+      }
+      const injectedOptions = injectTransaction(options)
+      return (superclass as any).query.call(this, injectedOptions)
     }
 
     static async create(values: any, options?: ModelOptions) {
-      return (superclass as any).create(values, injectTransaction(options))
+      return (superclass as any).create.call(this, values, injectTransaction(options))
     }
 
     static async createMany(values: any[], options?: ModelOptions) {
-      return (superclass as any).createMany(values, injectTransaction(options))
+      return (superclass as any).createMany.call(this, values, injectTransaction(options))
     }
 
     static async updateOrCreate(
@@ -309,7 +316,8 @@ export function Transactional<T extends new (...args: any[]) => LucidModel>(supe
       updatePayload: any, 
       options?: ModelOptions
     ) {
-      return (superclass as any).updateOrCreate(
+      return (superclass as any).updateOrCreate.call(
+        this,
         searchPayload, 
         updatePayload, 
         injectTransaction(options)
@@ -317,23 +325,23 @@ export function Transactional<T extends new (...args: any[]) => LucidModel>(supe
     }
 
     static async find(value: any, options?: ModelOptions) {
-      return (superclass as any).find(value, injectTransaction(options))
+      return (superclass as any).find.call(this, value, injectTransaction(options))
     }
 
     static async findBy(key: string, value: any, options?: ModelOptions) {
-      return (superclass as any).findBy(key, value, injectTransaction(options))
+      return (superclass as any).findBy.call(this, key, value, injectTransaction(options))
     }
 
     static async findOrFail(value: any, options?: ModelOptions) {
-      return (superclass as any).findOrFail(value, injectTransaction(options))
+      return (superclass as any).findOrFail.call(this, value, injectTransaction(options))
     }
 
     static async first(options?: ModelOptions) {
-      return (superclass as any).first(injectTransaction(options))
+      return (superclass as any).first.call(this, injectTransaction(options))
     }
 
     static async firstOrFail(options?: ModelOptions) {
-      return (superclass as any).firstOrFail(injectTransaction(options))
+      return (superclass as any).firstOrFail.call(this, injectTransaction(options))
     }
 
     // Instance methods with automatic transaction injection
@@ -342,8 +350,7 @@ export function Transactional<T extends new (...args: any[]) => LucidModel>(supe
       if (trx && !(this as any).$trx) {
         return (this as any).useTransaction(trx).save()
       }
-      const BaseModel = this.constructor as any
-      return BaseModel.prototype.save.call(this)
+      return (superclass.prototype as any).save.call(this)
     }
 
     async delete(): Promise<void> {
@@ -351,8 +358,7 @@ export function Transactional<T extends new (...args: any[]) => LucidModel>(supe
       if (trx && !(this as any).$trx) {
         return (this as any).useTransaction(trx).delete()
       }
-      const BaseModel = this.constructor as any
-      return BaseModel.prototype.delete.call(this)
+      return (superclass.prototype as any).delete.call(this)
     }
 
     async forceDelete(): Promise<void> {
@@ -362,8 +368,7 @@ export function Transactional<T extends new (...args: any[]) => LucidModel>(supe
       }
       
       const instance = this as any
-      const BaseModel = this.constructor as any
-      return instance.forceDelete ? instance.forceDelete() : BaseModel.prototype.delete.call(this)
+      return instance.forceDelete ? (superclass.prototype as any).forceDelete.call(this) : (superclass.prototype as any).delete.call(this)
     }
 
     async restore(): Promise<void> {
@@ -377,11 +382,22 @@ export function Transactional<T extends new (...args: any[]) => LucidModel>(supe
     }
   }
 
-  // Preserve the original class name and prototype
+  // Preserve the original class name and copy static properties
   Object.defineProperty(TransactionalModel, 'name', {
     value: superclass.name,
     configurable: true
   })
+
+  // Copy static properties and methods from superclass
+  const staticProps = Object.getOwnPropertyNames(superclass)
+  for (const prop of staticProps) {
+    if (prop !== 'length' && prop !== 'name' && prop !== 'prototype') {
+      const descriptor = Object.getOwnPropertyDescriptor(superclass, prop)
+      if (descriptor && !Object.prototype.hasOwnProperty.call(TransactionalModel, prop)) {
+        Object.defineProperty(TransactionalModel, prop, descriptor)
+      }
+    }
+  }
 
   return TransactionalModel as T
 }

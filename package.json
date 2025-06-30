@@ -1,7 +1,8 @@
 {
   "name": "adonisjs-transaction-decorator",
-  "version": "1.0.3",
+  "version": "1.0.9",
   "description": "Transaction decorator and mixin for AdonisJS applications",
+  "type": "module",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
